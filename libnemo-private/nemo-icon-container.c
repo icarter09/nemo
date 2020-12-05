@@ -245,6 +245,7 @@ clicked_on_icon (NemoIconContainer *container,
                           NemoIcon *icon,
                     GdkEventButton *event)
 {
+
     if (icon == NULL)
         return FALSE;
 
@@ -2997,6 +2998,13 @@ button_press_event (GtkWidget *widget,
         /* Forget about the old keyboard selection now that we've started mousing. */
         clear_keyboard_focus (container);
 	clear_keyboard_rubberband_start (container);
+
+       // hide and clear the type-ahead search when a mouse click occurs
+       if (event->type == gdk_button_press && container->details->search_window){
+           remove_search_entry_timeout (container);
+           gtk_widget_hide (container->details->search_window);
+           gtk_entry_set_text (gtk_entry (container->details->search_entry), "");
+       }
 
 	if (event->type == GDK_2BUTTON_PRESS || event->type == GDK_3BUTTON_PRESS) {
 		/* We use our own double-click detection. */
